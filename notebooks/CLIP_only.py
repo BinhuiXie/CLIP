@@ -96,87 +96,92 @@ datasets = {
         }
 }
 
+# imagenet_templates = [
+#     'a bad photo of a {}.',
+#     'a photo of many {}.',
+#     'a sculpture of a {}.',
+#     'a photo of the hard to see {}.',
+#     'a low resolution photo of the {}.',
+#     'a rendering of a {}.',
+#     'graffiti of a {}.',
+#     'a bad photo of the {}.',
+#     'a cropped photo of the {}.',
+#     'a tattoo of a {}.',
+#     'the embroidered {}.',
+#     'a photo of a hard to see {}.',
+#     'a bright photo of a {}.',
+#     'a photo of a clean {}.',
+#     'a photo of a dirty {}.',
+#     'a dark photo of the {}.',
+#     'a drawing of a {}.',
+#     'a photo of my {}.',
+#     'the plastic {}.',
+#     'a photo of the cool {}.',
+#     'a close-up photo of a {}.',
+#     'a black and white photo of the {}.',
+#     'a painting of the {}.',
+#     'a painting of a {}.',
+#     'a pixelated photo of the {}.',
+#     'a sculpture of the {}.',
+#     'a bright photo of the {}.',
+#     'a cropped photo of a {}.',
+#     'a plastic {}.',
+#     'a photo of the dirty {}.',
+#     'a jpeg corrupted photo of a {}.',
+#     'a blurry photo of the {}.',
+#     'a photo of the {}.',
+#     'a good photo of the {}.',
+#     'a rendering of the {}.',
+#     'a {} in a video game.',
+#     'a photo of one {}.',
+#     'a doodle of a {}.',
+#     'a close-up photo of the {}.',
+#     'a photo of a {}.',
+#     'the origami {}.',
+#     'the {} in a video game.',
+#     'a sketch of a {}.',
+#     'a doodle of the {}.',
+#     'a origami {}.',
+#     'a low resolution photo of a {}.',
+#     'the toy {}.',
+#     'a rendition of the {}.',
+#     'a photo of the clean {}.',
+#     'a photo of a large {}.',
+#     'a rendition of a {}.',
+#     'a photo of a nice {}.',
+#     'a photo of a weird {}.',
+#     'a blurry photo of a {}.',
+#     'a cartoon {}.',
+#     'art of a {}.',
+#     'a sketch of the {}.',
+#     'a embroidered {}.',
+#     'a pixelated photo of a {}.',
+#     'itap of the {}.',
+#     'a jpeg corrupted photo of the {}.',
+#     'a good photo of a {}.',
+#     'a plushie {}.',
+#     'a photo of the nice {}.',
+#     'a photo of the small {}.',
+#     'a photo of the weird {}.',
+#     'the cartoon {}.',
+#     'art of the {}.',
+#     'a drawing of the {}.',
+#     'a photo of the large {}.',
+#     'a black and white photo of a {}.',
+#     'the plushie {}.',
+#     'a dark photo of a {}.',
+#     'itap of a {}.',
+#     'graffiti of the {}.',
+#     'a toy {}.',
+#     'itap of my {}.',
+#     'a photo of a cool {}.',
+#     'a photo of a small {}.',
+#     'a tattoo of the {}.',
+# ]
+
+
 imagenet_templates = [
-    'a bad photo of a {}.',
-    'a photo of many {}.',
-    'a sculpture of a {}.',
-    'a photo of the hard to see {}.',
-    'a low resolution photo of the {}.',
-    'a rendering of a {}.',
-    'graffiti of a {}.',
-    'a bad photo of the {}.',
-    'a cropped photo of the {}.',
-    'a tattoo of a {}.',
-    'the embroidered {}.',
-    'a photo of a hard to see {}.',
-    'a bright photo of a {}.',
-    'a photo of a clean {}.',
-    'a photo of a dirty {}.',
-    'a dark photo of the {}.',
-    'a drawing of a {}.',
-    'a photo of my {}.',
-    'the plastic {}.',
-    'a photo of the cool {}.',
-    'a close-up photo of a {}.',
-    'a black and white photo of the {}.',
-    'a painting of the {}.',
-    'a painting of a {}.',
-    'a pixelated photo of the {}.',
-    'a sculpture of the {}.',
-    'a bright photo of the {}.',
-    'a cropped photo of a {}.',
-    'a plastic {}.',
-    'a photo of the dirty {}.',
-    'a jpeg corrupted photo of a {}.',
-    'a blurry photo of the {}.',
-    'a photo of the {}.',
-    'a good photo of the {}.',
-    'a rendering of the {}.',
-    'a {} in a video game.',
-    'a photo of one {}.',
-    'a doodle of a {}.',
-    'a close-up photo of the {}.',
-    'a photo of a {}.',
-    'the origami {}.',
-    'the {} in a video game.',
-    'a sketch of a {}.',
-    'a doodle of the {}.',
-    'a origami {}.',
-    'a low resolution photo of a {}.',
-    'the toy {}.',
-    'a rendition of the {}.',
-    'a photo of the clean {}.',
-    'a photo of a large {}.',
-    'a rendition of a {}.',
-    'a photo of a nice {}.',
-    'a photo of a weird {}.',
-    'a blurry photo of a {}.',
-    'a cartoon {}.',
-    'art of a {}.',
-    'a sketch of the {}.',
-    'a embroidered {}.',
-    'a pixelated photo of a {}.',
-    'itap of the {}.',
-    'a jpeg corrupted photo of the {}.',
-    'a good photo of a {}.',
-    'a plushie {}.',
-    'a photo of the nice {}.',
-    'a photo of the small {}.',
-    'a photo of the weird {}.',
-    'the cartoon {}.',
-    'art of the {}.',
-    'a drawing of the {}.',
-    'a photo of the large {}.',
-    'a black and white photo of a {}.',
-    'the plushie {}.',
-    'a dark photo of a {}.',
-    'itap of a {}.',
-    'graffiti of the {}.',
-    'a toy {}.',
-    'itap of my {}.',
-    'a photo of a cool {}.',
-    'a photo of a small {}.',
-    'a tattoo of the {}.',
+    'a photo of a {}.'
 ]
 
 
@@ -201,63 +206,65 @@ def accuracy(output, target, topk=(1,)):
     return [float(correct[:k].reshape(-1).float().sum(0, keepdim=True).cpu().numpy()) for k in topk]
 
 
-model, preprocess = clip.load("RN101")
-
 for dataset_name in datasets:  # all domains
     print(f"{len(datasets[dataset_name]['classes'])} classes, {len(imagenet_templates)} templates")
     dataset_classes = datasets[dataset_name]['classes']
     for domain_name in datasets[dataset_name]['domains']:
         domain_path = os.path.join('../data', dataset_name, domain_name)
-        images = ImageFolder(domain_path, transform=preprocess)
-        loader = torch.utils.data.DataLoader(images, batch_size=32, num_workers=2)
 
-        zeroshot_weights = zeroshot_classifier(dataset_classes, imagenet_templates, model)
+        for model_name in clip.available_models():
+            model, preprocess = clip.load(model_name)
 
-        with torch.no_grad():
-            top1, top5, n = 0., 0., 0.
-            total_pred, total_gt = None, None
-            for i, (images, target) in enumerate(tqdm(loader)):
-                images = images.cuda()
-                target = target.cuda()
+            images = ImageFolder(domain_path, transform=preprocess)
+            loader = torch.utils.data.DataLoader(images, batch_size=32, num_workers=2)
 
-                # predict
-                image_features = model.encode_image(images)
-                image_features /= image_features.norm(dim=-1, keepdim=True)
-                logits = 100. * image_features @ zeroshot_weights
+            zeroshot_weights = zeroshot_classifier(dataset_classes, imagenet_templates, model)
 
-                # measure accuracy
-                acc1, acc5 = accuracy(logits, target, topk=(1, 5))
-                top1 += acc1
-                top5 += acc5
-                n += images.size(0)
+            with torch.no_grad():
+                top1, top5, n = 0., 0., 0.
+                total_pred, total_gt = None, None
+                for i, (images, target) in enumerate(tqdm(loader)):
+                    images = images.cuda()
+                    target = target.cuda()
 
-                if total_gt is None:
-                    total_gt = target.cpu()
-                    total_pred = logits.max(1)[1].cpu()
-                else:
-                    total_gt = torch.cat((total_gt, target.cpu()))
-                    total_pred = torch.cat((total_pred, logits.max(1)[1].cpu()))
+                    # predict
+                    image_features = model.encode_image(images)
+                    image_features /= image_features.norm(dim=-1, keepdim=True)
+                    logits = 100. * image_features @ zeroshot_weights
 
-        per_class_acc = [0. for _ in range(len(dataset_classes))]
-        target_class_acc = [0. for _ in range(datasets[dataset_name]['split'][0] + datasets[dataset_name]['split'][2])]
-        print('-' * 30, dataset_name, '\t\t', domain_name, '-' * 30)
-        for cls in range(len(dataset_classes)):
-            per_class_acc[cls] = ((total_pred == cls) & (total_pred == total_gt)).sum() / (total_gt == cls).sum()
-            print('class:', dataset_classes[cls], f'acc:{per_class_acc[cls]:.2f}')
+                    # measure accuracy
+                    acc1, acc5 = accuracy(logits, target, topk=(1, 5))
+                    top1 += acc1
+                    top5 += acc5
+                    n += images.size(0)
 
-            if not (datasets[dataset_name]['split'][0] <= cls < datasets[dataset_name]['split'][0] +
-                    datasets[dataset_name]['split'][1]):
-                index = cls if cls < datasets[dataset_name]['split'][0] else cls - datasets[dataset_name]['split'][1]
-                target_class_acc[index] = ((total_pred == index) & (total_pred == total_gt)).sum() / (
-                            total_gt == index).sum()
+                    if total_gt is None:
+                        total_gt = target.cpu()
+                        total_pred = logits.max(1)[1].cpu()
+                    else:
+                        total_gt = torch.cat((total_gt, target.cpu()))
+                        total_pred = torch.cat((total_pred, logits.max(1)[1].cpu()))
 
-        print('mean class acc:', np.mean(per_class_acc))
+            per_class_acc = [0. for _ in range(len(dataset_classes))]
+            target_class_acc = [0. for _ in range(datasets[dataset_name]['split'][0] + datasets[dataset_name]['split'][2])]
+            print('-' * 30, dataset_name, '\t', domain_name, '\t', model_name, '-' * 30)
+            for cls in range(len(dataset_classes)):
+                per_class_acc[cls] = ((total_pred == cls) & (total_pred == total_gt)).sum() / (total_gt == cls).sum()
+                print('class:', dataset_classes[cls], f'acc:{per_class_acc[cls]:.2f}')
 
-        print('target mean class acc:', np.mean(target_class_acc))
+                if not (datasets[dataset_name]['split'][0] <= cls < datasets[dataset_name]['split'][0] +
+                        datasets[dataset_name]['split'][1]):
+                    index = cls if cls < datasets[dataset_name]['split'][0] else cls - datasets[dataset_name]['split'][1]
+                    target_class_acc[index] = ((total_pred == index) & (total_pred == total_gt)).sum() / (
+                                total_gt == index).sum()
 
-        top1 = (top1 / n) * 100
-        top5 = (top5 / n) * 100
+            print('mean class acc:', np.mean(per_class_acc))
 
-        print(f"Top-1 accuracy: {top1:.2f}")
-        print(f"Top-5 accuracy: {top5:.2f}")
-        print('-' * 100)
+            print('target mean class acc:', np.mean(target_class_acc))
+
+            top1 = (top1 / n) * 100
+            top5 = (top5 / n) * 100
+
+            print(f"Top-1 accuracy: {top1:.2f}")
+            print(f"Top-5 accuracy: {top5:.2f}")
+            print('-' * 100)
