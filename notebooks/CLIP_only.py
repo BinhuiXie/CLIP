@@ -238,7 +238,8 @@ for dataset_name in datasets:  # all domains
                     total_pred = torch.cat((total_pred, logits.max(1)[1].cpu()))
 
         per_class_acc = [0. for _ in range(len(dataset_classes))]
-        target_class_acc = [0. for _ in range(datasets[domain_name]['split'][0] + datasets[domain_name]['split'][2])]
+        target_class_acc = [0. for _ in range(datasets[dataset_name]['split'][0] + datasets[dataset_name]['split'][2])]
+        print('-' * 30, dataset_name, '\t\t', domain_name, '-' * 30)
         for cls in range(len(dataset_classes)):
             per_class_acc[cls] = ((total_pred == cls) & (total_pred == total_gt)).sum() / (total_gt == cls).sum()
             print('class:', dataset_classes[cls], f'acc:{per_class_acc[cls]:.2f}')
@@ -258,3 +259,4 @@ for dataset_name in datasets:  # all domains
 
         print(f"Top-1 accuracy: {top1:.2f}")
         print(f"Top-5 accuracy: {top5:.2f}")
+        print('-' * 100)
