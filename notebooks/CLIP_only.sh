@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=4 nohup python CLIP_only.py &
