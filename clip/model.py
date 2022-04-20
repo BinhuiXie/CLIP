@@ -381,13 +381,13 @@ def convert_weights(model: nn.Module):
             for attr in [*[f"{s}_proj_weight" for s in ["in", "q", "k", "v"]], "in_proj_bias", "bias_k", "bias_v"]:
                 tensor = getattr(l, attr)
                 if tensor is not None:
-                    tensor.data = tensor.data.half()
+                    tensor.dataset_name = tensor.dataset_name.half()
 
         for name in ["text_projection", "proj"]:
             if hasattr(l, name):
                 attr = getattr(l, name)
                 if attr is not None:
-                    attr.data = attr.data.half()
+                    attr.dataset_name = attr.dataset_name.half()
 
     model.apply(_convert_weights_to_fp16)
 
