@@ -249,18 +249,18 @@ for dataset_name in datasets:  # all domains
             target_class_acc = [0. for _ in range(datasets[dataset_name]['split'][0] + datasets[dataset_name]['split'][2])]
             print('-' * 30, dataset_name, '\t', domain_name, '\t', model_name, '-' * 30)
             for cls in range(len(dataset_classes)):
-                per_class_acc[cls] = ((total_pred == cls) & (total_pred == total_gt)).sum() / (total_gt == cls).sum()
+                per_class_acc[cls] = ((total_pred == cls) & (total_pred == total_gt)).sum() / (total_gt == cls).sum() * 100.
                 print('class:', dataset_classes[cls], f'acc:{per_class_acc[cls]:.2f}')
 
                 if not (datasets[dataset_name]['split'][0] <= cls < datasets[dataset_name]['split'][0] +
                         datasets[dataset_name]['split'][1]):
                     index = cls if cls < datasets[dataset_name]['split'][0] else cls - datasets[dataset_name]['split'][1]
                     target_class_acc[index] = ((total_pred == index) & (total_pred == total_gt)).sum() / (
-                                total_gt == index).sum()
+                                total_gt == index).sum() * 100.
 
-            print('mean class acc:', np.mean(per_class_acc))
+            print(per_class_acc, 'mean class acc:', np.mean(per_class_acc))
 
-            print('target mean class acc:', np.mean(target_class_acc))
+            print(target_class_acc, 'target mean class acc:', np.mean(target_class_acc))
 
             top1 = (top1 / n) * 100
             top5 = (top5 / n) * 100
