@@ -244,9 +244,9 @@ for dataset_name in datasets:  # all domains
             per_class_acc[cls] = ((total_pred == cls) & (total_pred == total_gt)).sum() / (total_gt == cls).sum()
             print('class:', dataset_classes[cls], f'acc:{per_class_acc[cls]:.2f}')
 
-            if not (datasets[domain_name]['split'][0] <= cls < datasets[domain_name]['split'][0] +
-                    datasets[domain_name]['split'][1]):
-                index = cls if cls < datasets[domain_name]['split'][0] else cls - datasets[domain_name]['split'][1]
+            if not (datasets[dataset_name]['split'][0] <= cls < datasets[dataset_name]['split'][0] +
+                    datasets[dataset_name]['split'][1]):
+                index = cls if cls < datasets[dataset_name]['split'][0] else cls - datasets[dataset_name]['split'][1]
                 target_class_acc[index] = ((total_pred == index) & (total_pred == total_gt)).sum() / (
                             total_gt == index).sum()
 
