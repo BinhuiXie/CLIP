@@ -18,6 +18,36 @@ print("Torch version:", torch.__version__)
 import clip
 
 datasets = {
+    'visda':  # 6, 3, 3
+        {
+            'classes': ['aeroplane', 'bicycle', 'bus', 'car', 'horse', 'knife', 'motorcycle', 'person', 'plant',
+                        'skateboard', 'train', 'truck'],
+            'domains': ['validation'],
+            'split': [6, 3, 3]
+        },
+    'office31':  # 10, 11, 10
+        {
+            'classes': ['back_pack', 'bike', 'bike_helmet', 'bookcase', 'bottle', 'calculator', 'desk_chair',
+                        'desk_lamp', 'desktop_computer', 'file_cabinet', 'headphones', 'keyboard', 'laptop_computer',
+                        'letter_tray', 'mobile_phone', 'monitor', 'mouse', 'mug', 'paper_notebook', 'pen', 'phone',
+                        'printer', 'projector', 'punchers', 'ring_binder', 'ruler', 'scissors', 'speaker', 'stapler',
+                        'tape_dispenser', 'trash_can'],
+            'domains': ["amazon", "webcam", "dslr"],
+            'split': [10, 11, 10]
+        },
+    'home':  # 10, 5, 50
+        {
+            'classes': ['Alarm_Clock', 'Backpack', 'Batteries', 'Bed', 'Bike', 'Bottle', 'Bucket', 'Calculator',
+                        'Calendar', 'Candles', 'Chair', 'Clipboards', 'Computer', 'Couch', 'Curtains', 'Desk_Lamp',
+                        'Drill', 'Eraser', 'Exit_Sign', 'Fan', 'File_Cabinet', 'Flipflops', 'Flowers', 'Folder', 'Fork',
+                        'Glasses', 'Hammer', 'Helmet', 'Kettle', 'Keyboard', 'Knives', 'Lamp_Shade', 'Laptop', 'Marker',
+                        'Monitor', 'Mop', 'Mouse', 'Mug', 'Notebook', 'Oven', 'Pan', 'Paper_Clip', 'Pen', 'Pencil',
+                        'Postit_Notes', 'Printer', 'Push_Pin', 'Radio', 'Refrigerator', 'Ruler', 'Scissors',
+                        'Screwdriver', 'Shelf', 'Sink', 'Sneakers', 'Soda', 'Speaker', 'Spoon', 'TV', 'Table',
+                        'Telephone', 'ToothBrush', 'Toys', 'Trash_Can', 'Webcam'],
+            'domains': ["Art", "Clipart", "Product", "RealWorld"],
+            'split': [10, 5, 50]
+        },
     'domainnet':
         {
             'classes': ['The_Eiffel_Tower', 'The_Great_Wall_of_China', 'The_Mona_Lisa', 'aircraft_carrier', 'airplane',
@@ -65,36 +95,6 @@ datasets = {
             'domains': ["painting", "real", "sketch", "clipart", "infograph", "quickdraw", ],
             'split': [150, 50, 145]
 
-        },
-    'visda':  # 6, 3, 3
-        {
-            'classes': ['aeroplane', 'bicycle', 'bus', 'car', 'horse', 'knife', 'motorcycle', 'person', 'plant',
-                        'skateboard', 'train', 'truck'],
-            'domains': ['validation'],
-            'split': [6, 3, 3]
-        },
-    'office31':  # 10, 11, 10
-        {
-            'classes': ['back_pack', 'bike', 'bike_helmet', 'bookcase', 'bottle', 'calculator', 'desk_chair',
-                        'desk_lamp', 'desktop_computer', 'file_cabinet', 'headphones', 'keyboard', 'laptop_computer',
-                        'letter_tray', 'mobile_phone', 'monitor', 'mouse', 'mug', 'paper_notebook', 'pen', 'phone',
-                        'printer', 'projector', 'punchers', 'ring_binder', 'ruler', 'scissors', 'speaker', 'stapler',
-                        'tape_dispenser', 'trash_can'],
-            'domains': ["amazon", "webcam", "dslr"],
-            'split': [10, 11, 10]
-        },
-    'home':  # 10, 5, 50
-        {
-            'classes': ['Alarm_Clock', 'Backpack', 'Batteries', 'Bed', 'Bike', 'Bottle', 'Bucket', 'Calculator',
-                        'Calendar', 'Candles', 'Chair', 'Clipboards', 'Computer', 'Couch', 'Curtains', 'Desk_Lamp',
-                        'Drill', 'Eraser', 'Exit_Sign', 'Fan', 'File_Cabinet', 'Flipflops', 'Flowers', 'Folder', 'Fork',
-                        'Glasses', 'Hammer', 'Helmet', 'Kettle', 'Keyboard', 'Knives', 'Lamp_Shade', 'Laptop', 'Marker',
-                        'Monitor', 'Mop', 'Mouse', 'Mug', 'Notebook', 'Oven', 'Pan', 'Paper_Clip', 'Pen', 'Pencil',
-                        'Postit_Notes', 'Printer', 'Push_Pin', 'Radio', 'Refrigerator', 'Ruler', 'Scissors',
-                        'Screwdriver', 'Shelf', 'Sink', 'Sneakers', 'Soda', 'Speaker', 'Spoon', 'TV', 'Table',
-                        'Telephone', 'ToothBrush', 'Toys', 'Trash_Can', 'Webcam'],
-            'domains': ["Art", "Clipart", "Product", "RealWorld"],
-            'split': [10, 5, 50]
         },
 }
 
@@ -309,7 +309,7 @@ for dataset_name in datasets:  # all domains
             for cls in range(len(dataset_classes)):
                 if (total_gt == cls).sum():
                     per_class_acc[cls] = ((total_pred == cls) & (total_pred == total_gt)).sum() / (
-                                total_gt == cls).sum() * 100.
+                            total_gt == cls).sum() * 100.
                     print('class:', dataset_classes[cls], f'acc:{per_class_acc[cls]:.2f}')
                 else:
                     print('class:', dataset_classes[cls], 'does not exist')
@@ -320,7 +320,7 @@ for dataset_name in datasets:  # all domains
                         1]
                     if (total_gt == cls).sum():
                         target_class_acc[index] = ((total_pred == cls) & (total_pred == total_gt)).sum() / (
-                                    total_gt == cls).sum() * 100.
+                                total_gt == cls).sum() * 100.
                     else:
                         print('class:', dataset_classes[cls], 'target private class does not exist')
 
