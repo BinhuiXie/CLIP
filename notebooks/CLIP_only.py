@@ -255,8 +255,7 @@ for dataset_name in datasets:  # all domains
                 if not (datasets[dataset_name]['split'][0] <= cls < datasets[dataset_name]['split'][0] +
                         datasets[dataset_name]['split'][1]):
                     index = cls if cls < datasets[dataset_name]['split'][0] else cls - datasets[dataset_name]['split'][1]
-                    target_class_acc[index] = ((total_pred == index) & (total_pred == total_gt)).sum() / (
-                                total_gt == index).sum() * 100.
+                    target_class_acc[index] = ((total_pred == cls) & (total_pred == total_gt)).sum() / (total_gt == cls).sum() * 100.
 
             print(per_class_acc, 'mean class acc:', np.mean(per_class_acc))
 
