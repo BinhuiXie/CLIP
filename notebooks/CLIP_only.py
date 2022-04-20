@@ -15,16 +15,17 @@ print("Torch version:", torch.__version__)
 import clip
 
 datasets = {
-    'office31':
+    'office31':  # 10, 11, 10
         {
             'classes': ['back_pack', 'bike', 'bike_helmet', 'bookcase', 'bottle', 'calculator', 'desk_chair',
                         'desk_lamp', 'desktop_computer', 'file_cabinet', 'headphones', 'keyboard', 'laptop_computer',
                         'letter_tray', 'mobile_phone', 'monitor', 'mouse', 'mug', 'paper_notebook', 'pen', 'phone',
                         'printer', 'projector', 'punchers', 'ring_binder', 'ruler', 'scissors', 'speaker', 'stapler',
                         'tape_dispenser', 'trash_can'],
-            'domains': ["amazon", "webcam", "dslr"]
+            'domains': ["amazon", "webcam", "dslr"],
+            'split': [10, 11, 10]
         },
-    'home':
+    'home':  # 10, 5, 50
         {
             'classes': ['Alarm_Clock', 'Backpack', 'Batteries', 'Bed', 'Bike', 'Bottle', 'Bucket', 'Calculator',
                         'Calendar', 'Candles', 'Chair', 'Clipboards', 'Computer', 'Couch', 'Curtains', 'Desk_Lamp',
@@ -34,13 +35,15 @@ datasets = {
                         'Postit_Notes', 'Printer', 'Push_Pin', 'Radio', 'Refrigerator', 'Ruler', 'Scissors',
                         'Screwdriver', 'Shelf', 'Sink', 'Sneakers', 'Soda', 'Speaker', 'Spoon', 'TV', 'Table',
                         'Telephone', 'ToothBrush', 'Toys', 'Trash_Can', 'Webcam'],
-            'domains': ["Art", "Clipart", "Product", "RealWorld"]
+            'domains': ["Art", "Clipart", "Product", "RealWorld"],
+            'split': [10, 5, 50]
         },
-    'visda':
+    'visda':  # 6, 3, 3
         {
             'classes': ['aeroplane', 'bicycle', 'bus', 'car', 'horse', 'knife', 'motorcycle', 'person', 'plant',
                         'skateboard', 'train', 'truck'],
-            'domains': ['validation']
+            'domains': ['validation'],
+            'split': [6, 3, 3]
         },
     'domainnet':
         {
@@ -86,7 +89,8 @@ datasets = {
                         'traffic_light', 'train', 'tree', 'triangle', 'trombone', 'truck', 'trumpet', 'umbrella',
                         'underwear', 'van', 'vase', 'violin', 'washing_machine', 'watermelon', 'waterslide', 'whale',
                         'wheel', 'windmill', 'wine_bottle', 'wine_glass', 'wristwatch', 'yoga', 'zebra', 'zigzag'],
-            'domains': ["clipart", "infograph", "painting", "quickdraw", "real", "sketch"]
+            'domains': ["clipart", "infograph", "painting", "quickdraw", "real", "sketch"],
+            'split': [150, 50, 145]
 
         }
 }
@@ -234,10 +238,20 @@ for dataset_name in datasets:  # all domains
                     total_pred = torch.cat((total_pred, logits.max(1)[1].cpu()))
 
         per_class_acc = [0. for _ in range(len(dataset_classes))]
+        target_class_acc = [0. for _ in range(datasets[domain_name]['split'][0] + datasets[domain_name]['split'][2])]
         for cls in range(len(dataset_classes)):
             per_class_acc[cls] = ((total_pred == cls) & (total_pred == total_gt)).sum() / (total_gt == cls).sum()
             print('class:', dataset_classes[cls], f'acc:{per_class_acc[cls]:.2f}')
+
+            if not (datasets[domain_name]['split'][0] <= cls < datasets[domain_name]['split'][0] +
+                    datasets[domain_name]['split'][1]):
+                index = cls if cls < datasets[domain_name]['split'][0] else cls - datasets[domain_name]['split'][1]
+                target_class_acc[index] = ((total_pred == index) & (total_pred == total_gt)).sum() / (
+                            total_gt == index).sum()
+
         print('mean class acc:', np.mean(per_class_acc))
+
+        print('target mean class acc:', np.mean(target_class_acc))
 
         top1 = (top1 / n) * 100
         top5 = (top5 / n) * 100
