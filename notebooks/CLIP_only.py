@@ -9,43 +9,15 @@ from torchvision.datasets import ImageFolder
 
 from collections import defaultdict, OrderedDict
 from sklearn.metrics import f1_score, confusion_matrix
+import numpy as np
+from PIL import Image
+from torch.utils.data import Dataset
 
 print("Torch version:", torch.__version__)
 
 import clip
 
 datasets = {
-    'visda':  # 6, 3, 3
-        {
-            'classes': ['aeroplane', 'bicycle', 'bus', 'car', 'horse', 'knife', 'motorcycle', 'person', 'plant',
-                        'skateboard', 'train', 'truck'],
-            'domains': ['validation'],
-            'split': [6, 3, 3]
-        },
-    'office31':  # 10, 11, 10
-        {
-            'classes': ['back_pack', 'bike', 'bike_helmet', 'bookcase', 'bottle', 'calculator', 'desk_chair',
-                        'desk_lamp', 'desktop_computer', 'file_cabinet', 'headphones', 'keyboard', 'laptop_computer',
-                        'letter_tray', 'mobile_phone', 'monitor', 'mouse', 'mug', 'paper_notebook', 'pen', 'phone',
-                        'printer', 'projector', 'punchers', 'ring_binder', 'ruler', 'scissors', 'speaker', 'stapler',
-                        'tape_dispenser', 'trash_can'],
-            'domains': ["amazon", "webcam", "dslr"],
-            'split': [10, 11, 10]
-        },
-    'home':  # 10, 5, 50
-        {
-            'classes': ['Alarm_Clock', 'Backpack', 'Batteries', 'Bed', 'Bike', 'Bottle', 'Bucket', 'Calculator',
-                        'Calendar', 'Candles', 'Chair', 'Clipboards', 'Computer', 'Couch', 'Curtains', 'Desk_Lamp',
-                        'Drill', 'Eraser', 'Exit_Sign', 'Fan', 'File_Cabinet', 'Flipflops', 'Flowers', 'Folder', 'Fork',
-                        'Glasses', 'Hammer', 'Helmet', 'Kettle', 'Keyboard', 'Knives', 'Lamp_Shade', 'Laptop', 'Marker',
-                        'Monitor', 'Mop', 'Mouse', 'Mug', 'Notebook', 'Oven', 'Pan', 'Paper_Clip', 'Pen', 'Pencil',
-                        'Postit_Notes', 'Printer', 'Push_Pin', 'Radio', 'Refrigerator', 'Ruler', 'Scissors',
-                        'Screwdriver', 'Shelf', 'Sink', 'Sneakers', 'Soda', 'Speaker', 'Spoon', 'TV', 'Table',
-                        'Telephone', 'ToothBrush', 'Toys', 'Trash_Can', 'Webcam'],
-            'domains': ["Art", "Clipart", "Product", "RealWorld"],
-            'split': [10, 5, 50]
-        },
-
     'domainnet':
         {
             'classes': ['The_Eiffel_Tower', 'The_Great_Wall_of_China', 'The_Mona_Lisa', 'aircraft_carrier', 'airplane',
@@ -90,10 +62,40 @@ datasets = {
                         'traffic_light', 'train', 'tree', 'triangle', 'trombone', 'truck', 'trumpet', 'umbrella',
                         'underwear', 'van', 'vase', 'violin', 'washing_machine', 'watermelon', 'waterslide', 'whale',
                         'wheel', 'windmill', 'wine_bottle', 'wine_glass', 'wristwatch', 'yoga', 'zebra', 'zigzag'],
-            'domains': ["clipart", "infograph", "painting", "quickdraw", "real", "sketch"],
+            'domains': ["painting", "real", "sketch", "clipart", "infograph", "quickdraw", ],
             'split': [150, 50, 145]
 
-        }
+        },
+    'visda':  # 6, 3, 3
+        {
+            'classes': ['aeroplane', 'bicycle', 'bus', 'car', 'horse', 'knife', 'motorcycle', 'person', 'plant',
+                        'skateboard', 'train', 'truck'],
+            'domains': ['validation'],
+            'split': [6, 3, 3]
+        },
+    'office31':  # 10, 11, 10
+        {
+            'classes': ['back_pack', 'bike', 'bike_helmet', 'bookcase', 'bottle', 'calculator', 'desk_chair',
+                        'desk_lamp', 'desktop_computer', 'file_cabinet', 'headphones', 'keyboard', 'laptop_computer',
+                        'letter_tray', 'mobile_phone', 'monitor', 'mouse', 'mug', 'paper_notebook', 'pen', 'phone',
+                        'printer', 'projector', 'punchers', 'ring_binder', 'ruler', 'scissors', 'speaker', 'stapler',
+                        'tape_dispenser', 'trash_can'],
+            'domains': ["amazon", "webcam", "dslr"],
+            'split': [10, 11, 10]
+        },
+    'home':  # 10, 5, 50
+        {
+            'classes': ['Alarm_Clock', 'Backpack', 'Batteries', 'Bed', 'Bike', 'Bottle', 'Bucket', 'Calculator',
+                        'Calendar', 'Candles', 'Chair', 'Clipboards', 'Computer', 'Couch', 'Curtains', 'Desk_Lamp',
+                        'Drill', 'Eraser', 'Exit_Sign', 'Fan', 'File_Cabinet', 'Flipflops', 'Flowers', 'Folder', 'Fork',
+                        'Glasses', 'Hammer', 'Helmet', 'Kettle', 'Keyboard', 'Knives', 'Lamp_Shade', 'Laptop', 'Marker',
+                        'Monitor', 'Mop', 'Mouse', 'Mug', 'Notebook', 'Oven', 'Pan', 'Paper_Clip', 'Pen', 'Pencil',
+                        'Postit_Notes', 'Printer', 'Push_Pin', 'Radio', 'Refrigerator', 'Ruler', 'Scissors',
+                        'Screwdriver', 'Shelf', 'Sink', 'Sneakers', 'Soda', 'Speaker', 'Spoon', 'TV', 'Table',
+                        'Telephone', 'ToothBrush', 'Toys', 'Trash_Can', 'Webcam'],
+            'domains': ["Art", "Clipart", "Product", "RealWorld"],
+            'split': [10, 5, 50]
+        },
 }
 
 # imagenet_templates = [
@@ -188,7 +190,7 @@ imagenet_templates = [
 def zeroshot_classifier(classnames, templates, model):
     with torch.no_grad():
         zeroshot_weights = []
-        for classname in tqdm(classnames):
+        for classname in classnames:
             texts = [template.format(classname) for template in templates]  # format with class
             texts = clip.tokenize(texts).cuda()  # tokenize
             class_embeddings = model.encode_text(texts)  # embed with text encoder
@@ -206,6 +208,56 @@ def accuracy(output, target, topk=(1,)):
     return [float(correct[:k].reshape(-1).float().sum(0, keepdim=True).cpu().numpy()) for k in topk]
 
 
+def make_dataset(image_list, labels):
+    if labels:
+        len_ = len(image_list)
+        images = [(image_list[i].strip(), labels[i, :]) for i in range(len_)]
+    else:
+        if len(image_list[0].split()) > 2:
+            images = [(val.split()[0], np.array([int(la) for la in val.split()[1:]])) for val in image_list]
+        else:
+            images = [(val.split()[0], int(val.split()[1])) for val in image_list]
+    return images
+
+
+def rgb_loader(path):
+    with open(path, 'rb') as f:
+        with Image.open(f) as img:
+            return img.convert('RGB')
+
+
+def l_loader(path):
+    with open(path, 'rb') as f:
+        with Image.open(f) as img:
+            return img.convert('L')
+
+
+class ImageList(Dataset):
+    def __init__(self, image_list, labels=None, transform=None, target_transform=None, mode='RGB'):
+        imgs = make_dataset(image_list, labels)
+
+        self.imgs = imgs
+        self.transform = transform
+        self.target_transform = target_transform
+        if mode == 'RGB':
+            self.loader = rgb_loader
+        elif mode == 'L':
+            self.loader = l_loader
+
+    def __getitem__(self, index):
+        path, target = self.imgs[index]
+        img = self.loader(path)
+        if self.transform is not None:
+            img = self.transform(img)
+        if self.target_transform is not None:
+            target = self.target_transform(target)
+
+        return img, target
+
+    def __len__(self):
+        return len(self.imgs)
+
+
 for dataset_name in datasets:  # all domains
     print(f"{len(datasets[dataset_name]['classes'])} classes, {len(imagenet_templates)} templates")
     dataset_classes = datasets[dataset_name]['classes']
@@ -215,7 +267,12 @@ for dataset_name in datasets:  # all domains
         for model_name in clip.available_models():
             model, preprocess = clip.load(model_name)
 
-            images = ImageFolder(domain_path, transform=preprocess)
+            if dataset_name == 'domainnet':
+                images = ImageList(open(os.path.join('../data', dataset_name, domain_name + '_test.txt')).readlines(),
+                                   transform=preprocess)
+            else:
+                images = ImageFolder(domain_path, transform=preprocess)
+
             loader = torch.utils.data.DataLoader(images, batch_size=32, num_workers=2)
 
             zeroshot_weights = zeroshot_classifier(dataset_classes, imagenet_templates, model)
@@ -246,16 +303,20 @@ for dataset_name in datasets:  # all domains
                         total_pred = torch.cat((total_pred, logits.max(1)[1].cpu()))
 
             per_class_acc = [0. for _ in range(len(dataset_classes))]
-            target_class_acc = [0. for _ in range(datasets[dataset_name]['split'][0] + datasets[dataset_name]['split'][2])]
+            target_class_acc = [0. for _ in
+                                range(datasets[dataset_name]['split'][0] + datasets[dataset_name]['split'][2])]
             print('-' * 30, dataset_name, '\t', domain_name, '\t', model_name, '-' * 30)
             for cls in range(len(dataset_classes)):
-                per_class_acc[cls] = ((total_pred == cls) & (total_pred == total_gt)).sum() / (total_gt == cls).sum() * 100.
+                per_class_acc[cls] = ((total_pred == cls) & (total_pred == total_gt)).sum() / (
+                            total_gt == cls).sum() * 100.
                 print('class:', dataset_classes[cls], f'acc:{per_class_acc[cls]:.2f}')
 
                 if not (datasets[dataset_name]['split'][0] <= cls < datasets[dataset_name]['split'][0] +
                         datasets[dataset_name]['split'][1]):
-                    index = cls if cls < datasets[dataset_name]['split'][0] else cls - datasets[dataset_name]['split'][1]
-                    target_class_acc[index] = ((total_pred == cls) & (total_pred == total_gt)).sum() / (total_gt == cls).sum() * 100.
+                    index = cls if cls < datasets[dataset_name]['split'][0] else cls - datasets[dataset_name]['split'][
+                        1]
+                    target_class_acc[index] = ((total_pred == cls) & (total_pred == total_gt)).sum() / (
+                                total_gt == cls).sum() * 100.
 
             print(per_class_acc, 'mean class acc:', np.mean(per_class_acc))
 
