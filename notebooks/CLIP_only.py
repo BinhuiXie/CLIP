@@ -3,7 +3,7 @@ import os.path
 import numpy as np
 import torch
 import clip
-from tqdm.notebook import tqdm
+from tqdm import tqdm
 from pkg_resources import packaging
 from torchvision.datasets import ImageFolder
 
@@ -202,11 +202,11 @@ for dataset_name in datasets:  # all domains
     print(f"{len(datasets[dataset_name]['classes'])} classes, {len(imagenet_templates)} templates")
     dataset_classes = datasets[dataset_name]['classes']
     for domain_name in datasets[dataset_name]['domains']:
-        domain_path = os.path.join('data', dataset_name, datasets[dataset_name][domain_name])
+        domain_path = os.path.join('../data', dataset_name, domain_name)
         images = ImageFolder(domain_path, transform=preprocess)
         loader = torch.utils.data.DataLoader(images, batch_size=32, num_workers=2)
 
-        zeroshot_weights = zeroshot_classifier(dataset_classes, imagenet_templates)
+        zeroshot_weights = zeroshot_classifier(dataset_classes, imagenet_templates, model)
 
         with torch.no_grad():
             top1, top5, n = 0., 0., 0.
