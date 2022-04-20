@@ -15,6 +15,13 @@ print("Torch version:", torch.__version__)
 import clip
 
 datasets = {
+    'visda':  # 6, 3, 3
+        {
+            'classes': ['aeroplane', 'bicycle', 'bus', 'car', 'horse', 'knife', 'motorcycle', 'person', 'plant',
+                        'skateboard', 'train', 'truck'],
+            'domains': ['validation'],
+            'split': [6, 3, 3]
+        },
     'office31':  # 10, 11, 10
         {
             'classes': ['back_pack', 'bike', 'bike_helmet', 'bookcase', 'bottle', 'calculator', 'desk_chair',
@@ -38,13 +45,7 @@ datasets = {
             'domains': ["Art", "Clipart", "Product", "RealWorld"],
             'split': [10, 5, 50]
         },
-    'visda':  # 6, 3, 3
-        {
-            'classes': ['aeroplane', 'bicycle', 'bus', 'car', 'horse', 'knife', 'motorcycle', 'person', 'plant',
-                        'skateboard', 'train', 'truck'],
-            'domains': ['validation'],
-            'split': [6, 3, 3]
-        },
+
     'domainnet':
         {
             'classes': ['The_Eiffel_Tower', 'The_Great_Wall_of_China', 'The_Mona_Lisa', 'aircraft_carrier', 'airplane',
@@ -200,7 +201,7 @@ def accuracy(output, target, topk=(1,)):
     return [float(correct[:k].reshape(-1).float().sum(0, keepdim=True).cpu().numpy()) for k in topk]
 
 
-model, preprocess = clip.load("RN50")
+model, preprocess = clip.load("RN101")
 
 for dataset_name in datasets:  # all domains
     print(f"{len(datasets[dataset_name]['classes'])} classes, {len(imagenet_templates)} templates")
