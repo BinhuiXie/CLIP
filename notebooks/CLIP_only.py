@@ -18,36 +18,36 @@ print("Torch version:", torch.__version__)
 import clip
 
 datasets = {
-    'visda':  # 6, 3, 3
-        {
-            'classes': ['aeroplane', 'bicycle', 'bus', 'car', 'horse', 'knife', 'motorcycle', 'person', 'plant',
-                        'skateboard', 'train', 'truck'],
-            'domains': ['validation'],
-            'split': [6, 3, 3]
-        },
-    'office31':  # 10, 11, 10
-        {
-            'classes': ['back_pack', 'bike', 'bike_helmet', 'bookcase', 'bottle', 'calculator', 'desk_chair',
-                        'desk_lamp', 'desktop_computer', 'file_cabinet', 'headphones', 'keyboard', 'laptop_computer',
-                        'letter_tray', 'mobile_phone', 'monitor', 'mouse', 'mug', 'paper_notebook', 'pen', 'phone',
-                        'printer', 'projector', 'punchers', 'ring_binder', 'ruler', 'scissors', 'speaker', 'stapler',
-                        'tape_dispenser', 'trash_can'],
-            'domains': ["amazon", "webcam", "dslr"],
-            'split': [10, 11, 10]
-        },
-    'home':  # 10, 5, 50
-        {
-            'classes': ['Alarm_Clock', 'Backpack', 'Batteries', 'Bed', 'Bike', 'Bottle', 'Bucket', 'Calculator',
-                        'Calendar', 'Candles', 'Chair', 'Clipboards', 'Computer', 'Couch', 'Curtains', 'Desk_Lamp',
-                        'Drill', 'Eraser', 'Exit_Sign', 'Fan', 'File_Cabinet', 'Flipflops', 'Flowers', 'Folder', 'Fork',
-                        'Glasses', 'Hammer', 'Helmet', 'Kettle', 'Keyboard', 'Knives', 'Lamp_Shade', 'Laptop', 'Marker',
-                        'Monitor', 'Mop', 'Mouse', 'Mug', 'Notebook', 'Oven', 'Pan', 'Paper_Clip', 'Pen', 'Pencil',
-                        'Postit_Notes', 'Printer', 'Push_Pin', 'Radio', 'Refrigerator', 'Ruler', 'Scissors',
-                        'Screwdriver', 'Shelf', 'Sink', 'Sneakers', 'Soda', 'Speaker', 'Spoon', 'TV', 'Table',
-                        'Telephone', 'ToothBrush', 'Toys', 'Trash_Can', 'Webcam'],
-            'domains': ["Art", "Clipart", "Product", "RealWorld"],
-            'split': [10, 5, 50]
-        },
+    # 'visda':  # 6, 3, 3
+    #     {
+    #         'classes': ['aeroplane', 'bicycle', 'bus', 'car', 'horse', 'knife', 'motorcycle', 'person', 'plant',
+    #                     'skateboard', 'train', 'truck'],
+    #         'domains': ['validation'],
+    #         'split': [6, 3, 3]
+    #     },
+    # 'office31':  # 10, 11, 10
+    #     {
+    #         'classes': ['back_pack', 'bike', 'bike_helmet', 'bookcase', 'bottle', 'calculator', 'desk_chair',
+    #                     'desk_lamp', 'desktop_computer', 'file_cabinet', 'headphones', 'keyboard', 'laptop_computer',
+    #                     'letter_tray', 'mobile_phone', 'monitor', 'mouse', 'mug', 'paper_notebook', 'pen', 'phone',
+    #                     'printer', 'projector', 'punchers', 'ring_binder', 'ruler', 'scissors', 'speaker', 'stapler',
+    #                     'tape_dispenser', 'trash_can'],
+    #         'domains': ["amazon", "webcam", "dslr"],
+    #         'split': [10, 11, 10]
+    #     },
+    # 'home':  # 10, 5, 50
+    #     {
+    #         'classes': ['Alarm_Clock', 'Backpack', 'Batteries', 'Bed', 'Bike', 'Bottle', 'Bucket', 'Calculator',
+    #                     'Calendar', 'Candles', 'Chair', 'Clipboards', 'Computer', 'Couch', 'Curtains', 'Desk_Lamp',
+    #                     'Drill', 'Eraser', 'Exit_Sign', 'Fan', 'File_Cabinet', 'Flipflops', 'Flowers', 'Folder', 'Fork',
+    #                     'Glasses', 'Hammer', 'Helmet', 'Kettle', 'Keyboard', 'Knives', 'Lamp_Shade', 'Laptop', 'Marker',
+    #                     'Monitor', 'Mop', 'Mouse', 'Mug', 'Notebook', 'Oven', 'Pan', 'Paper_Clip', 'Pen', 'Pencil',
+    #                     'Postit_Notes', 'Printer', 'Push_Pin', 'Radio', 'Refrigerator', 'Ruler', 'Scissors',
+    #                     'Screwdriver', 'Shelf', 'Sink', 'Sneakers', 'Soda', 'Speaker', 'Spoon', 'TV', 'Table',
+    #                     'Telephone', 'ToothBrush', 'Toys', 'Trash_Can', 'Webcam'],
+    #         'domains': ["Art", "Clipart", "Product", "RealWorld"],
+    #         'split': [10, 5, 50]
+    #     },
     'domainnet':
         {
             'classes': ['aircraft_carrier', 'airplane', 'alarm_clock', 'ambulance', 'angel', 'animal_migration', 'ant',
@@ -264,7 +264,7 @@ for dataset_name in datasets:  # all domains
     for domain_name in datasets[dataset_name]['domains']:
         domain_path = os.path.join('../data', dataset_name, domain_name)
 
-        for model_name in clip.available_models():
+        for model_name in ['RN50']:
             model, preprocess = clip.load(model_name)
 
             if dataset_name == 'domainnet':
