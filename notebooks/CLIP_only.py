@@ -264,7 +264,7 @@ for dataset_name in datasets:  # all domains
     for domain_name in datasets[dataset_name]['domains']:
         domain_path = os.path.join('../data', dataset_name, domain_name)
 
-        for model_name in ['RN50']:
+        for model_name in clip.available_models():
             model, preprocess = clip.load(model_name)
 
             if dataset_name == 'domainnet':
