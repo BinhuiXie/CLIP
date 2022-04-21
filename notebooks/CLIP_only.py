@@ -50,15 +50,14 @@ datasets = {
         },
     'domainnet':
         {
-            'classes': ['The_Eiffel_Tower', 'The_Great_Wall_of_China', 'The_Mona_Lisa', 'aircraft_carrier', 'airplane',
-                        'alarm_clock', 'ambulance', 'angel', 'animal_migration', 'ant', 'anvil', 'apple', 'arm',
-                        'asparagus', 'axe', 'backpack', 'banana', 'bandage', 'barn', 'baseball', 'baseball_bat',
-                        'basket', 'basketball', 'bat', 'bathtub', 'beach', 'bear', 'beard', 'bed', 'bee', 'belt',
-                        'bench', 'bicycle', 'binoculars', 'bird', 'birthday_cake', 'blackberry', 'blueberry', 'book',
-                        'boomerang', 'bottlecap', 'bowtie', 'bracelet', 'brain', 'bread', 'bridge', 'broccoli', 'broom',
-                        'bucket', 'bulldozer', 'bus', 'bush', 'butterfly', 'cactus', 'cake', 'calculator', 'calendar',
-                        'camel', 'camera', 'camouflage', 'campfire', 'candle', 'cannon', 'canoe', 'car', 'carrot',
-                        'castle', 'cat', 'ceiling_fan', 'cell_phone', 'cello', 'chair', 'chandelier', 'church',
+            'classes': ['aircraft_carrier', 'airplane', 'alarm_clock', 'ambulance', 'angel', 'animal_migration', 'ant',
+                        'anvil', 'apple', 'arm', 'asparagus', 'axe', 'backpack', 'banana', 'bandage', 'barn', 'baseball',
+                        'baseball_bat', 'basket', 'basketball', 'bat', 'bathtub', 'beach', 'bear', 'beard', 'bed', 'bee',
+                        'belt', 'bench', 'bicycle', 'binoculars', 'bird', 'birthday_cake', 'blackberry', 'blueberry',
+                        'book', 'boomerang', 'bottlecap', 'bowtie', 'bracelet', 'brain', 'bread', 'bridge', 'broccoli',
+                        'broom', 'bucket', 'bulldozer', 'bus', 'bush', 'butterfly', 'cactus', 'cake', 'calculator',
+                        'calendar', 'camel', 'camera', 'camouflage', 'campfire', 'candle', 'cannon', 'canoe', 'car',
+                        'carrot', 'castle', 'cat', 'ceiling_fan', 'cell_phone', 'cello', 'chair', 'chandelier', 'church',
                         'circle', 'clarinet', 'clock', 'cloud', 'coffee_cup', 'compass', 'computer', 'cookie', 'cooler',
                         'couch', 'cow', 'crab', 'crayon', 'crocodile', 'crown', 'cruise_ship', 'cup', 'diamond',
                         'dishwasher', 'diving_board', 'dog', 'dolphin', 'donut', 'door', 'dragon', 'dresser', 'drill',
@@ -87,12 +86,13 @@ datasets = {
                         'spoon', 'spreadsheet', 'square', 'squiggle', 'squirrel', 'stairs', 'star', 'steak', 'stereo',
                         'stethoscope', 'stitches', 'stop_sign', 'stove', 'strawberry', 'streetlight', 'string_bean',
                         'submarine', 'suitcase', 'sun', 'swan', 'sweater', 'swing_set', 'sword', 'syringe', 't-shirt',
-                        'table', 'teapot', 'teddy-bear', 'telephone', 'television', 'tennis_racquet', 'tent', 'tiger',
-                        'toaster', 'toe', 'toilet', 'tooth', 'toothbrush', 'toothpaste', 'tornado', 'tractor',
-                        'traffic_light', 'train', 'tree', 'triangle', 'trombone', 'truck', 'trumpet', 'umbrella',
-                        'underwear', 'van', 'vase', 'violin', 'washing_machine', 'watermelon', 'waterslide', 'whale',
-                        'wheel', 'windmill', 'wine_bottle', 'wine_glass', 'wristwatch', 'yoga', 'zebra', 'zigzag'],
-            'domains': ["painting", "real", "sketch", "clipart", "infograph", "quickdraw", ],
+                        'table', 'teapot', 'teddy-bear', 'telephone', 'television', 'tennis_racquet', 'tent',
+                        'The_Eiffel_Tower', 'The_Great_Wall_of_China', 'The_Mona_Lisa', 'tiger', 'toaster', 'toe',
+                        'toilet', 'tooth', 'toothbrush', 'toothpaste', 'tornado', 'tractor', 'traffic_light', 'train',
+                        'tree', 'triangle', 'trombone', 'truck', 'trumpet', 'umbrella', 'underwear', 'van', 'vase',
+                        'violin', 'washing_machine', 'watermelon', 'waterslide', 'whale', 'wheel', 'windmill',
+                        'wine_bottle', 'wine_glass', 'wristwatch', 'yoga', 'zebra', 'zigzag'],
+            'domains': ["painting", "real", "sketch", "clipart", "infograph", "quickdraw"],
             'split': [150, 50, 145]
 
         },
@@ -305,6 +305,7 @@ for dataset_name in datasets:  # all domains
             per_class_acc = [0. for _ in range(len(dataset_classes))]
             target_class_acc = [0. for _ in
                                 range(datasets[dataset_name]['split'][0] + datasets[dataset_name]['split'][2])]
+            print('\n' * 5)
             print('-' * 30, dataset_name, '\t', domain_name, '\t', model_name, '-' * 30)
             for cls in range(len(dataset_classes)):
                 if (total_gt == cls).sum():
@@ -334,3 +335,4 @@ for dataset_name in datasets:  # all domains
             print(f"Top-1 accuracy: {top1:.2f}")
             print(f"Top-5 accuracy: {top5:.2f}")
             print('-' * 100)
+            print('\n' * 5)
