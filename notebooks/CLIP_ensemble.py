@@ -17,7 +17,7 @@ print("Torch version:", torch.__version__)
 
 import clip
 
-datasets = {
+DATASETS = {
     'visda':  # 6, 3, 3
         {
             'source_classes': ['aeroplane', 'bicycle', 'bus', 'car', 'horse', 'knife', 'motorcycle', 'person', 'plant'],
@@ -690,7 +690,7 @@ class ImageList(Dataset):
         return len(self.imgs)
 
 
-def zeroshot_inference(imagenet_templates, args):
+def zeroshot_inference(args, imagenet_templates, datasets):
     for dataset_name in datasets:  # all domains
         print(f"{len(datasets[dataset_name][args.class_set])} classes, {len(imagenet_templates)} templates")
         dataset_classes = datasets[dataset_name][args.class_set]
@@ -779,6 +779,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--ensemble", action='store_true', help="whether use prompt ensemble")
     parser.add_argument("--class_set", type=str, default='source_classes', help="class set used for inference")
+    parser.add_argument("--dataset", type=str, default='home', help="testing dataset", choices=['visda', 'office31', 'home', 'domainnet', 'all'])
     args = parser.parse_args()
 
     if args.ensemble:
@@ -869,4 +870,9 @@ if __name__ == '__main__':
             'a photo of a {}.'
         ]
 
-    zeroshot_inference(imagenet_templates, args)
+    if args.dataset == 'all':
+        datasets = DATASETS
+    else:
+        datasets = {args.dataset: DATASETS[args.datasets]}
+
+    zeroshot_inference(args, imagenet_templates, datasets)
