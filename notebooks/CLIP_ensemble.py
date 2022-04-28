@@ -690,14 +690,14 @@ class ImageList(Dataset):
         return len(self.imgs)
 
 
-def zeroshot_inference(args, imagenet_templates, datasets):
+def zeroshot_inference(args, imagenet_templates, datasets, models):
     for dataset_name in datasets:  # all domains
         print(f"{len(datasets[dataset_name][args.class_set])} classes, {len(imagenet_templates)} templates")
         dataset_classes = datasets[dataset_name][args.class_set]
         for domain_name in datasets[dataset_name]['domains']:
             domain_path = os.path.join('../data', dataset_name, domain_name)
 
-            for model_name in clip.available_models():
+            for model_name in models:
                 model, preprocess = clip.load(model_name)
 
                 if dataset_name == 'domainnet':
@@ -779,7 +779,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--ensemble", action='store_true', help="whether use prompt ensemble")
     parser.add_argument("--class_set", type=str, default='source_classes', help="class set used for inference")
-    parser.add_argument("--dataset", type=str, default='home', help="testing dataset", choices=['visda', 'office31', 'home', 'domainnet', 'all'])
+    parser.add_argument("--dataset", type=str, default='home', help="testing dataset",
+                        choices=['visda', 'office31', 'home', 'domainnet', 'all'])
+    parser.add_argument("--net", type=str, default='RN50', help="testing dataset",
+                        choices=['RN50', 'RN101', 'RN50x4', 'RN50x16', 'ViT-B/32', 'ViT-B/16', 'all'])
     args = parser.parse_args()
 
     if args.ensemble:
@@ -870,9 +873,12 @@ if __name__ == '__main__':
             'a photo of a {}.'
         ]
 
+    datasets = {args.dataset: DATASETS[args.dataset]}
     if args.dataset == 'all':
         datasets = DATASETS
-    else:
-        datasets = {args.dataset: DATASETS[args.datasets]}
 
-    zeroshot_inference(args, imagenet_templates, datasets)
+    models = [args.net]
+    if args.net == 'all':
+        models = clip.available_models()
+
+    zeroshot_inference(args, imagenet_templates, datasets, models)
